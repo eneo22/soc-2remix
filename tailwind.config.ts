@@ -47,6 +47,11 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        terminal: "hsl(var(--terminal))",
+        "terminal-bg": "hsl(var(--terminal-bg))",
+        danger: "hsl(var(--danger))",
+        warning: "hsl(var(--warning))",
+        "cyber-blue": "hsl(var(--cyber-blue))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
