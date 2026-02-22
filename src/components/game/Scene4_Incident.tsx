@@ -5,8 +5,8 @@ import { NarrativeBlock } from './Typewriter';
 import { XPNotification } from './GameHUD';
 
 export const Scene4_Incident = () => {
-  const { nextScene, addXP, setChoice, goToScene } = useGame();
-  const [phase, setPhase] = useState<'narrative' | 'decision' | 'result'>('narrative');
+  const { nextScene, addXP, setChoice } = useGame();
+  const [phase, setPhase] = useState<'narrative' | 'marcus_alert' | 'valeria' | 'marcus_question' | 'decision' | 'result'>('narrative');
   const [timer, setTimer] = useState(10);
   const [chosen, setChosen] = useState<string | null>(null);
   const [showXP, setShowXP] = useState(false);
@@ -17,14 +17,12 @@ export const Scene4_Incident = () => {
     "Le chat de Marcus s'affole..."
   ];
 
-  // Timer
   useEffect(() => {
     if (phase !== 'decision' || timer <= 0) return;
     const interval = setInterval(() => setTimer(t => t - 1), 1000);
     return () => clearInterval(interval);
   }, [phase, timer]);
 
-  // Auto-fail on timeout
   useEffect(() => {
     if (timer <= 0 && phase === 'decision' && !chosen) {
       handleChoice('timeout');
@@ -45,9 +43,9 @@ export const Scene4_Incident = () => {
   };
 
   const options = [
-    { id: 'A', label: 'Corruption', desc: "Essayer d'effacer les traces de Valeria dans les logs pour la protéger.", color: 'danger' },
-    { id: 'B', label: 'Mauvais réflexe', desc: "Lancer un scan Antivirus sur tout le réseau.", color: 'warning' },
-    { id: 'C', label: 'Le bon choix', desc: "Isoler immédiatement l'appareil de Valeria du réseau (Containment).", color: 'primary' },
+    { id: 'A', desc: "Essayer d'effacer les traces de Valeria dans les logs pour la protéger." },
+    { id: 'B', desc: "Lancer un scan Antivirus sur tout le réseau." },
+    { id: 'C', desc: "Isoler immédiatement l'appareil de Valeria du réseau." },
   ];
 
   return (
@@ -59,49 +57,62 @@ export const Scene4_Incident = () => {
           <h2 className="mb-6 font-mono text-xs uppercase tracking-widest text-danger">
             Scène 4 — La Catastrophe (Incident Response)
           </h2>
-          <NarrativeBlock lines={introLines} onComplete={() => {}} speed={30} />
+          <NarrativeBlock lines={introLines} onComplete={() => setPhase('marcus_alert')} speed={30} />
+        </motion.div>
+      )}
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 3 }}
-            className="mt-6 space-y-3"
+      {phase === 'marcus_alert' && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl">
+          <div className="rounded-lg border border-danger/50 bg-danger/5 p-4 pulse-danger">
+            <p className="font-mono text-xs text-danger mb-1">MARCUS — ALERTE CRITIQUE</p>
+            <p className="text-sm text-foreground/80">
+              "MERDE ! Valeria vient de cliquer sur le lien depuis son téléphone personnel, sur le réseau Wi-Fi VIP.
+              Elle voulait vraiment l'argent. Oblivion vient de rentrer dans le réseau interne.
+              Le serveur des transactions est en train d'être siphonné !"
+            </p>
+          </div>
+          <button
+            onClick={() => setPhase('valeria')}
+            className="mt-4 rounded-lg border border-danger bg-danger/10 px-6 py-3 font-mono text-sm text-danger transition-all hover:bg-danger/20"
           >
-            <div className="rounded-lg border border-danger/50 bg-danger/5 p-4 pulse-danger">
-              <p className="font-mono text-xs text-danger mb-1">MARCUS — ALERTE CRITIQUE</p>
-              <p className="text-sm text-foreground/80">
-                "MERDE ! Valeria vient de cliquer sur le lien depuis son téléphone personnel, sur le réseau Wi-Fi VIP.
-                Elle voulait vraiment l'argent. Oblivion vient de rentrer dans le réseau interne.
-                Le serveur des transactions est en train d'être siphonné !"
-              </p>
-            </div>
+            Continuer →
+          </button>
+        </motion.div>
+      )}
 
-            <div className="rounded-lg border border-warning/30 bg-card p-4">
-              <p className="font-mono text-xs text-warning mb-1">📞 VALERIA STERLING — Appel entrant</p>
-              <p className="text-sm text-foreground/80 italic">
-                "Aidez-moi, s'il vous plaît ! Couvrez-moi, si Elias ou le conseil d'administration apprennent que c'est moi
-                qui ai cliqué sur un mail parlant de notre liaison, je suis morte dans ce milieu ! Je vous paierai !"
-              </p>
-            </div>
+      {phase === 'valeria' && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl">
+          <div className="rounded-lg border border-warning/30 bg-card p-4">
+            <p className="font-mono text-xs text-warning mb-1">📞 VALERIA STERLING — Appel entrant</p>
+            <p className="text-sm text-foreground/80 italic">
+              "Aidez-moi, s'il vous plaît ! Couvrez-moi, si Elias ou le conseil d'administration apprennent que c'est moi
+              qui ai cliqué sur un mail parlant de notre liaison, je suis morte dans ce milieu ! Je vous paierai !"
+            </p>
+          </div>
+          <button
+            onClick={() => setPhase('marcus_question')}
+            className="mt-4 rounded-lg border border-danger bg-danger/10 px-6 py-3 font-mono text-sm text-danger transition-all hover:bg-danger/20"
+          >
+            Continuer →
+          </button>
+        </motion.div>
+      )}
 
-            <div className="rounded-lg border border-primary/30 bg-card p-4">
-              <p className="font-mono text-xs text-primary mb-1">MARCUS</p>
-              <p className="text-sm text-foreground/80">
-                "Rookie, on n'a que <span className="font-bold text-danger">10 secondes</span>. Quelle est la première règle
-                en réponse à incident face à une compromission active ?"
-              </p>
-            </div>
-          </motion.div>
-
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 6 }}
+      {phase === 'marcus_question' && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl">
+          <div className="rounded-lg border border-primary/30 bg-card p-4">
+            <p className="font-mono text-xs text-primary mb-1">MARCUS</p>
+            <p className="text-sm text-foreground/80">
+              "Rookie, on n'a que <span className="font-bold text-danger">10 secondes</span>. Quelle est la première règle
+              en réponse à incident face à une compromission active ?"
+            </p>
+          </div>
+          <button
             onClick={() => setPhase('decision')}
-            className="mt-6 rounded-lg border border-danger bg-danger/10 px-6 py-3 font-mono text-sm text-danger transition-all hover:bg-danger/20"
+            className="mt-4 rounded-lg border border-danger bg-danger/10 px-6 py-3 font-mono text-sm text-danger transition-all hover:bg-danger/20"
           >
             ⚡ DÉCIDER MAINTENANT
-          </motion.button>
+          </button>
         </motion.div>
       )}
 
@@ -125,16 +136,11 @@ export const Scene4_Incident = () => {
                 disabled={chosen !== null}
                 className={`w-full rounded-lg border p-4 text-left transition-all ${
                   chosen === opt.id
-                    ? `border-${opt.color} bg-${opt.color}/10`
-                    : `border-border bg-card hover:border-${opt.color}/50`
+                    ? 'border-foreground/50 bg-foreground/10'
+                    : 'border-border bg-card hover:border-foreground/30'
                 }`}
-                style={chosen === opt.id ? {
-                  borderColor: opt.color === 'danger' ? 'hsl(0 85% 55%)' : opt.color === 'warning' ? 'hsl(45 100% 55%)' : 'hsl(150 80% 50%)',
-                } : {}}
               >
-                <p className={`font-mono text-xs ${
-                  opt.color === 'danger' ? 'text-danger' : opt.color === 'warning' ? 'text-warning' : 'text-primary'
-                }`}>Option {opt.id} — {opt.label}</p>
+                <p className="font-mono text-xs text-muted-foreground">Option {opt.id}</p>
                 <p className="mt-1 text-sm text-foreground/70">{opt.desc}</p>
               </motion.button>
             ))}

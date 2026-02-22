@@ -41,7 +41,7 @@ export const Scene1_Email = () => {
           <h2 className="mb-6 font-mono text-xs uppercase tracking-widest text-primary terminal-glow">
             Scène 1 — L'Ennui et la Tentation
           </h2>
-          <NarrativeBlock lines={introLines} onComplete={() => setTimeout(() => setPhase('email'), 800)} />
+          <NarrativeBlock lines={introLines} onComplete={() => setPhase('email')} />
         </motion.div>
       )}
 
@@ -54,7 +54,6 @@ export const Scene1_Email = () => {
         >
           {/* Fake Email Client */}
           <div className="overflow-hidden rounded-lg border border-border bg-card shadow-2xl">
-            {/* Email Header Bar */}
             <div className="flex items-center gap-2 border-b border-border bg-secondary px-4 py-2">
               <div className="h-3 w-3 rounded-full bg-destructive/70" />
               <div className="h-3 w-3 rounded-full bg-warning/70" />
@@ -62,7 +61,6 @@ export const Scene1_Email = () => {
               <span className="ml-3 font-mono text-xs text-muted-foreground">KRONOS Mail — Copie sécurisée</span>
             </div>
 
-            {/* Email Content */}
             <div className="p-6">
               <div className="mb-4 space-y-2 border-b border-border pb-4">
                 <div className="flex items-start gap-2 text-sm">
@@ -138,7 +136,7 @@ export const Scene1_Email = () => {
             </div>
           </div>
 
-          {/* Show choices after viewing email */}
+          {/* Choices - NO labels, just descriptions */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -147,16 +145,16 @@ export const Scene1_Email = () => {
           >
             <button
               onClick={() => handleChoice('A')}
-              className="flex-1 rounded-lg border border-danger/30 bg-card px-6 py-4 text-left transition-all hover:border-danger hover:shadow-lg hover:shadow-danger/10"
+              className="flex-1 rounded-lg border border-border bg-card px-6 py-4 text-left transition-all hover:border-foreground/30 hover:shadow-lg"
             >
-              <p className="font-mono text-xs text-danger">Option A — Naïveté</p>
+              <p className="font-mono text-xs text-muted-foreground">Option A</p>
               <p className="mt-1 text-sm text-foreground/70">Cliquer sur le lien pour voir les documents confidentiels.</p>
             </button>
             <button
               onClick={() => handleChoice('B')}
-              className="flex-1 rounded-lg border border-primary/30 bg-card px-6 py-4 text-left transition-all hover:border-primary hover:shadow-lg hover:shadow-primary/10"
+              className="flex-1 rounded-lg border border-border bg-card px-6 py-4 text-left transition-all hover:border-foreground/30 hover:shadow-lg"
             >
-              <p className="font-mono text-xs text-primary">Option B — Analyse</p>
+              <p className="font-mono text-xs text-muted-foreground">Option B</p>
               <p className="mt-1 text-sm text-foreground/70">Signaler l'email comme suspect.</p>
             </button>
           </motion.div>
