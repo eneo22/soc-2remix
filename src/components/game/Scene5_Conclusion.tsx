@@ -3,7 +3,7 @@ import { useGame } from '@/contexts/GameContext';
 import { NarrativeBlock } from './Typewriter';
 
 export const Scene5_Conclusion = () => {
-  const { state } = useGame();
+  const { state, goToScene } = useGame();
   const totalXP = Object.values(state.xp).reduce((a, b) => a + b, 0);
 
   return (
@@ -18,7 +18,6 @@ export const Scene5_Conclusion = () => {
           Scène 5 — L'Aube d'un Analyste
         </h2>
 
-        {/* Narrative */}
         <div className="space-y-4 mb-8">
           <NarrativeBlock
             lines={[
@@ -29,22 +28,12 @@ export const Scene5_Conclusion = () => {
             speed={30}
           />
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 4 }}
-            className="rounded-lg border border-danger/30 bg-card p-4"
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 4 }} className="rounded-lg border border-danger/30 bg-card p-4">
             <p className="font-mono text-xs text-danger mb-1">💬 VALERIA STERLING</p>
             <p className="text-sm text-foreground/80 italic">"Tu le regretteras."</p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 5.5 }}
-            className="rounded-lg border border-primary/30 bg-card p-4"
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 5.5 }} className="rounded-lg border border-primary/30 bg-card p-4">
             <p className="font-mono text-xs text-primary mb-1">MARCUS</p>
             <p className="text-sm text-foreground/80">
               "T'as du cran, petit. T'as fait perdre son bonus à Valeria, mais t'as sauvé les meubles.
@@ -58,28 +47,14 @@ export const Scene5_Conclusion = () => {
           </motion.div>
         </div>
 
-        {/* Chapter Complete Screen */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 8 }}
-          className="rounded-xl border border-primary/50 bg-card p-8 text-center"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 8.5, type: 'spring' }}
-            className="mb-4 inline-block rounded-full border-2 border-primary bg-primary/10 p-4"
-          >
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 8 }} className="rounded-xl border border-primary/50 bg-card p-8 text-center">
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 8.5, type: 'spring' }} className="mb-4 inline-block rounded-full border-2 border-primary bg-primary/10 p-4">
             <span className="text-3xl">🔓</span>
           </motion.div>
 
-          <h3 className="mb-2 font-mono text-lg font-bold text-primary terminal-glow">
-            CHAPITRE 1 TERMINÉ
-          </h3>
+          <h3 className="mb-2 font-mono text-lg font-bold text-primary terminal-glow">CHAPITRE 1 TERMINÉ</h3>
           <p className="mb-6 text-sm text-muted-foreground">L'Appât — The Bait</p>
 
-          {/* XP Breakdown */}
           <div className="mb-6 grid grid-cols-2 gap-3">
             {[
               { label: 'Technique', value: state.xp.technical, icon: '⚡' },
@@ -99,10 +74,8 @@ export const Scene5_Conclusion = () => {
             <p className="font-mono text-2xl font-bold text-primary terminal-glow">{totalXP} XP Total</p>
           </div>
 
-          {/* Pedagogical Summary */}
           <div className="mb-6 rounded border border-border bg-secondary/50 p-4 text-left">
             <p className="mb-2 font-mono text-xs font-bold text-primary">📚 Résumé pédagogique</p>
-            <p className="text-sm text-foreground/80">Dans ce chapitre, vous avez appris que :</p>
             <ul className="mt-2 space-y-1 text-sm text-foreground/70">
               <li>1. Le <span className="font-bold text-warning">Phishing</span> exploite l'humain, pas la machine.</li>
               <li>2. Une <span className="font-bold text-primary">adresse IP</span> identifie une machine sur un réseau.</li>
@@ -110,7 +83,6 @@ export const Scene5_Conclusion = () => {
             </ul>
           </div>
 
-          {/* Choices recap */}
           <div className="mb-6 rounded border border-border bg-secondary/50 p-4 text-left">
             <p className="mb-2 font-mono text-xs font-bold text-muted-foreground">Vos choix :</p>
             <p className="text-xs text-foreground/60">
@@ -125,12 +97,20 @@ export const Scene5_Conclusion = () => {
             </p>
           </div>
 
-          <button
-            disabled
-            className="w-full rounded-lg border border-muted bg-muted/20 px-6 py-4 font-mono text-sm text-muted-foreground cursor-not-allowed"
-          >
-            🔒 CHAPITRE 2 : ANALYSE RÉSEAU — Bientôt disponible
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => goToScene(6)}
+              className="flex-1 rounded-lg border border-primary bg-primary/10 px-6 py-4 font-mono text-sm text-primary transition-all hover:bg-primary/20 hover:shadow-lg hover:shadow-primary/10"
+            >
+              ▶ CHAPITRE 2 : ANALYSE RÉSEAU
+            </button>
+            <button
+              onClick={() => goToScene(100)}
+              className="flex-1 rounded-lg border border-border bg-secondary px-6 py-4 font-mono text-sm text-muted-foreground transition-all hover:text-foreground hover:border-primary/30"
+            >
+              🏋️ ENTRAÎNEMENT
+            </button>
+          </div>
         </motion.div>
       </motion.div>
     </div>
