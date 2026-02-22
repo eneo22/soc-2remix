@@ -6,7 +6,7 @@ import { XPNotification } from './GameHUD';
 
 export const Scene2_Mentor = () => {
   const { state, nextScene, addXP } = useGame();
-  const [phase, setPhase] = useState<'narrative' | 'lesson' | 'quiz' | 'result'>('narrative');
+  const [phase, setPhase] = useState<'narrative' | 'marcus' | 'lesson' | 'quiz' | 'result'>('narrative');
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showXP, setShowXP] = useState(false);
   const [timer, setTimer] = useState(15);
@@ -40,7 +40,7 @@ export const Scene2_Mentor = () => {
 
   useEffect(() => {
     if (timer === 0 && phase === 'quiz' && selectedAnswer === null) {
-      setSelectedAnswer(-1); // timeout
+      setSelectedAnswer(-1);
     }
   }, [timer, phase, selectedAnswer]);
 
@@ -65,27 +65,23 @@ export const Scene2_Mentor = () => {
             Scène 2 — La Frappe et le Mentor
           </h2>
 
-          {choseA && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, backgroundColor: ['hsl(0 85% 10%)', 'hsl(0 85% 5%)'] }}
-              transition={{ duration: 0.5 }}
-              className="mb-6 rounded border border-danger/50 p-4"
-            >
-              <NarrativeBlock lines={narrativeA} onComplete={() => {}} speed={20} />
-            </motion.div>
+          {choseA ? (
+            <div className="mb-6 rounded border border-danger/50 p-4 bg-danger/5">
+              <NarrativeBlock lines={narrativeA} onComplete={() => setPhase('marcus')} speed={20} />
+            </div>
+          ) : (
+            <NarrativeBlock lines={narrativeB} onComplete={() => setPhase('marcus')} speed={20} />
           )}
-          {!choseA && (
-            <NarrativeBlock lines={narrativeB} onComplete={() => {}} speed={20} />
-          )}
+        </motion.div>
+      )}
 
-          {/* Marcus Chat */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: choseA ? 6 : 2 }}
-            className="mt-6 rounded-lg border border-primary/30 bg-card p-4"
-          >
+      {phase === 'marcus' && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl">
+          <h2 className="mb-6 font-mono text-xs uppercase tracking-widest text-primary terminal-glow">
+            Scène 2 — La Frappe et le Mentor
+          </h2>
+
+          <div className="rounded-lg border border-primary/30 bg-card p-4 mb-4">
             <p className="mb-1 font-mono text-xs font-bold text-primary">MARCUS — Chef du SOC</p>
             {choseA ? (
               <p className="text-sm leading-relaxed text-foreground/80">
@@ -98,15 +94,20 @@ export const Scene2_Mentor = () => {
                 Tu as repéré le zéro dans 'gl0bal', hein ?"
               </p>
             )}
-          </motion.div>
+          </div>
 
-          {/* Lesson */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: choseA ? 9 : 4 }}
-            className="mt-4 rounded-lg border border-primary/30 bg-card p-4"
+          <button
+            onClick={() => setPhase('lesson')}
+            className="mt-4 rounded-lg border border-primary bg-primary/10 px-6 py-3 font-mono text-sm text-primary transition-all hover:bg-primary/20"
           >
+            Continuer →
+          </button>
+        </motion.div>
+      )}
+
+      {phase === 'lesson' && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl">
+          <div className="rounded-lg border border-primary/30 bg-card p-4 mb-4">
             <p className="mb-1 font-mono text-xs font-bold text-primary">MARCUS</p>
             <p className="text-sm leading-relaxed text-foreground/80">
               "Écoute-moi bien. C'est ce qu'on appelle du <span className="font-bold text-warning">Spear-Phishing</span> (Hameçonnage ciblé).
@@ -115,17 +116,14 @@ export const Scene2_Mentor = () => {
               Le sexe, l'urgence, la cupidité, la peur de l'autorité.
               La faille, ce n'est pas Windows. <span className="font-bold text-warning">La faille, c'est l'humain.</span>"
             </p>
-          </motion.div>
+          </div>
 
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: choseA ? 12 : 6 }}
+          <button
             onClick={() => { setPhase('quiz'); setTimer(15); }}
-            className="mt-6 rounded-lg border border-primary bg-primary/10 px-6 py-3 font-mono text-sm text-primary transition-all hover:bg-primary/20"
+            className="mt-4 rounded-lg border border-primary bg-primary/10 px-6 py-3 font-mono text-sm text-primary transition-all hover:bg-primary/20"
           >
             Continuer →
-          </motion.button>
+          </button>
         </motion.div>
       )}
 

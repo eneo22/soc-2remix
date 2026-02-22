@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface TypewriterProps {
@@ -41,15 +41,37 @@ interface NarrativeBlockProps {
 export const NarrativeBlock = ({ lines, onComplete, speed = 25 }: NarrativeBlockProps) => {
   const [currentLine, setCurrentLine] = useState(0);
   const [allDone, setAllDone] = useState(false);
+  const [lineTypingDone, setLineTypingDone] = useState(false);
+  const [skipped, setSkipped] = useState(false);
 
-  const handleLineComplete = () => {
+  const handleLineComplete = useCallback(() => {
+    setLineTypingDone(true);
+  }, []);
+
+  const advance = useCallback(() => {
+    if (!lineTypingDone && !skipped) {
+      // Skip current line typing animation
+      setSkipped(true);
+      setLineTypingDone(true);
+      return;
+    }
     if (currentLine < lines.length - 1) {
-      setTimeout(() => setCurrentLine(c => c + 1), 400);
-    } else {
+      setCurrentLine(c => c + 1);
+      setLineTypingDone(false);
+      setSkipped(false);
+    } else if (!allDone) {
       setAllDone(true);
       onComplete?.();
     }
-  };
+  }, [lineTypingDone, skipped, currentLine, lines.length, allDone, onComplete]);
+
+  const skipAll = useCallback(() => {
+    setCurrentLine(lines.length - 1);
+    setSkipped(true);
+    setLineTypingDone(true);
+    setAllDone(true);
+    onComplete?.();
+  }, [lines.length, onComplete]);
 
   return (
     <div className="space-y-3">
@@ -60,13 +82,32 @@ export const NarrativeBlock = ({ lines, onComplete, speed = 25 }: NarrativeBlock
           animate={{ opacity: 1 }}
           className="text-sm md:text-base leading-relaxed text-foreground/90"
         >
-          {i === currentLine && !allDone ? (
+          {i === currentLine && !skipped ? (
             <Typewriter text={line} speed={speed} onComplete={handleLineComplete} />
           ) : (
             line
           )}
         </motion.p>
       ))}
+
+      <div className="flex items-center gap-3 mt-4">
+        {!allDone && (
+          <>
+            <button
+              onClick={advance}
+              className="rounded border border-primary/30 bg-primary/10 px-4 py-1.5 font-mono text-xs text-primary transition-all hover:bg-primary/20"
+            >
+              {lineTypingDone ? 'Suivant →' : 'Passer ▶'}
+            </button>
+            <button
+              onClick={skipAll}
+              className="font-mono text-xs text-muted-foreground transition-all hover:text-foreground"
+            >
+              Tout passer ⏭
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 };

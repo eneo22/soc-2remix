@@ -54,7 +54,6 @@ export const Scene3_Terminal = () => {
     const domain = parts[1];
 
     if (command === 'ping' && domain === 'kronos-gl0bal.com') {
-      // Success!
       setTypingOutput(true);
       let i = 0;
       const interval = setInterval(() => {
@@ -112,16 +111,7 @@ export const Scene3_Terminal = () => {
           <h2 className="mb-6 font-mono text-xs uppercase tracking-widest text-primary terminal-glow">
             Scène 3 — La Traque (Terminal 101)
           </h2>
-          <NarrativeBlock lines={introLines} onComplete={() => {}} speed={25} />
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 8 }}
-            onClick={() => setPhase('terminal')}
-            className="mt-6 rounded-lg border border-primary bg-primary/10 px-6 py-3 font-mono text-sm text-primary transition-all hover:bg-primary/20"
-          >
-            Ouvrir le Terminal →
-          </motion.button>
+          <NarrativeBlock lines={introLines} onComplete={() => setPhase('terminal')} speed={25} />
         </motion.div>
       )}
 
@@ -131,6 +121,13 @@ export const Scene3_Terminal = () => {
           animate={{ opacity: 1, scale: 1 }}
           className="w-full max-w-3xl"
         >
+          {/* Objective reminder */}
+          <div className="mb-4 rounded border border-primary/30 bg-primary/5 px-4 py-3">
+            <p className="font-mono text-xs text-primary">
+              🎯 <span className="font-bold">OBJECTIF :</span> Tape la commande <span className="text-warning font-bold">ping kronos-gl0bal.com</span> pour récupérer l'adresse IP du serveur ennemi.
+            </p>
+          </div>
+
           {/* Terminal Window */}
           <div className="overflow-hidden rounded-lg border border-primary/30 shadow-2xl shadow-primary/5">
             <div className="flex items-center gap-2 border-b border-primary/20 bg-secondary px-4 py-2">
@@ -145,7 +142,6 @@ export const Scene3_Terminal = () => {
               onClick={() => inputRef.current?.focus()}
               className="relative h-[400px] overflow-y-auto bg-terminal-bg p-4 font-mono text-sm cursor-text"
             >
-              {/* Scanline overlay */}
               <div className="scanline absolute inset-0" />
 
               {history.map((entry, i) => (
