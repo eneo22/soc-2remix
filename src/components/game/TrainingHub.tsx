@@ -86,10 +86,10 @@ export const TrainingHub = () => {
             <p className="text-xs text-muted-foreground mt-1">Renforce tes compétences avec des exercices pratiques</p>
           </div>
           <button
-            onClick={() => goToScene(0)}
+            onClick={() => goToScene(-1)}
             className="rounded border border-border bg-secondary px-4 py-2 font-mono text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
-            ← Retour au jeu
+            ← Accueil
           </button>
         </div>
 
