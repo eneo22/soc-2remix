@@ -6,6 +6,8 @@ export interface GameState {
   skills: Record<string, boolean>;
   isCompromised: boolean;
   playerName: string;
+  unlockedChapters: number[];
+  completedChapters: number[];
 }
 
 export interface QuizQuestion {

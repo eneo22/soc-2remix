@@ -3,7 +3,12 @@ import { useGame } from '@/contexts/GameContext';
 import { NarrativeBlock } from './Typewriter';
 
 export const Scene5_Conclusion = () => {
-  const { state, goToScene } = useGame();
+  const { state, goToScene, completeChapter } = useGame();
+
+  const handleContinue = (target: number) => {
+    completeChapter(1);
+    goToScene(target);
+  };
   const totalXP = Object.values(state.xp).reduce((a, b) => a + b, 0);
 
   return (
@@ -99,16 +104,16 @@ export const Scene5_Conclusion = () => {
 
           <div className="flex gap-3">
             <button
-              onClick={() => goToScene(6)}
+              onClick={() => handleContinue(6)}
               className="flex-1 rounded-lg border border-primary bg-primary/10 px-6 py-4 font-mono text-sm text-primary transition-all hover:bg-primary/20 hover:shadow-lg hover:shadow-primary/10"
             >
-              ▶ CHAPITRE 2 : ANALYSE RÉSEAU
+              ▶ CHAPITRE 2
             </button>
             <button
-              onClick={() => goToScene(100)}
+              onClick={() => handleContinue(-1)}
               className="flex-1 rounded-lg border border-border bg-secondary px-6 py-4 font-mono text-sm text-muted-foreground transition-all hover:text-foreground hover:border-primary/30"
             >
-              🏋️ ENTRAÎNEMENT
+              ← ACCUEIL
             </button>
           </div>
         </motion.div>
