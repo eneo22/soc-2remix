@@ -2,11 +2,11 @@ export interface TrainingModule {
   id: string;
   title: string;
   description: string;
-  category: 'analysis' | 'linux' | 'response';
+  category: 'analysis' | 'linux' | 'response' | 'network' | 'threats';
   difficulty: 'débutant' | 'intermédiaire' | 'avancé';
   type: 'quiz' | 'terminal' | 'project';
   requiredSkills: string[];
-  xpReward: { technical?: number; analytical?: number; reflexion?: number; detection?: number };
+  xpReward: { technical?: number; analytical?: number; reflexion?: number; detection?: number; speed?: number; accuracy?: number };
   content: QuizContent | TerminalContent | ProjectContent;
 }
 
@@ -31,12 +31,14 @@ export interface ProjectContent {
   type: 'project';
   scenario: string;
   objectives: string[];
-  instructions: string;
+  instructions?: string;
+  externalInstructions?: string[];
   validationHint: string;
   validator: (s: string) => { passed: boolean; feedback: string };
 }
 
 export const trainingModules: TrainingModule[] = [
+  // === EXISTING MODULES ===
   {
     id: 'analysis-logs-basics',
     title: 'Lecture de logs de connexion',
@@ -100,7 +102,7 @@ export const trainingModules: TrainingModule[] = [
     category: 'analysis',
     difficulty: 'débutant',
     type: 'project',
-    requiredSkills: ['analysis-logs'],
+    requiredSkills: [],
     xpReward: { technical: 20, analytical: 30 },
     content: {
       type: 'project',
@@ -129,7 +131,7 @@ export const trainingModules: TrainingModule[] = [
     category: 'analysis',
     difficulty: 'intermédiaire',
     type: 'project',
-    requiredSkills: ['analysis-phishing'],
+    requiredSkills: [],
     xpReward: { analytical: 30, detection: 20 },
     content: {
       type: 'project',
@@ -157,7 +159,7 @@ export const trainingModules: TrainingModule[] = [
     category: 'response',
     difficulty: 'intermédiaire',
     type: 'terminal',
-    requiredSkills: ['response-isolation'],
+    requiredSkills: [],
     xpReward: { technical: 40 },
     content: {
       type: 'terminal',
@@ -200,6 +202,215 @@ export const trainingModules: TrainingModule[] = [
             { text: "SHA-256", correct: true, feedback: "C'est le standard actuel pour l'analyse de malwares." },
           ],
           explanation: "SHA-256 offre un niveau de sécurité bien plus élevé contre les collisions.",
+        },
+      ],
+    },
+  },
+
+  // === 8 NEW MODULES ===
+  {
+    id: 'analysis-url-phishing',
+    title: "Analyse d'URL malveillante",
+    description: 'Apprends à repérer les domaines trompeurs (Typosquatting).',
+    category: 'analysis',
+    difficulty: 'débutant',
+    type: 'quiz',
+    requiredSkills: [],
+    xpReward: { technical: 10, analytical: 20 },
+    content: {
+      type: 'quiz',
+      questions: [
+        {
+          question: "Parmi ces URL, laquelle est une tentative de typosquatting ciblant 'paypal.com' ?",
+          options: [
+            { text: "https://www.paypal.com/login", correct: false, feedback: "C'est l'URL légitime." },
+            { text: "https://www.paypaI.com/secure", correct: true, feedback: "Exact. Le 'l' minuscule a été remplacé par un 'I' (i majuscule)." },
+            { text: "https://support.paypal.com", correct: false, feedback: "C'est un sous-domaine valide." },
+          ],
+          explanation: "Les attaquants utilisent des caractères visuellement similaires pour tromper l'œil humain.",
+        },
+      ],
+    },
+  },
+  {
+    id: 'linux-ping-diagnostic',
+    title: 'Diagnostic réseau (Ping)',
+    description: 'Vérifie si le serveur de base de données est en ligne.',
+    category: 'linux',
+    difficulty: 'débutant',
+    type: 'terminal',
+    requiredSkills: [],
+    xpReward: { technical: 25 },
+    content: {
+      type: 'terminal',
+      scenario: "La base de données RH (IP: 10.0.5.50) ne répond plus à l'application. Vérifie si la machine est allumée au niveau réseau.",
+      expectedCommand: 'ping 10.0.5.50',
+      hint: "Utilise la commande ping suivie de l'adresse IP.",
+      successOutput: [
+        "PING 10.0.5.50 (10.0.5.50): 56 data bytes",
+        "Request timeout for icmp_seq 0",
+        "Request timeout for icmp_seq 1",
+        "--- 10.0.5.50 ping statistics ---",
+        "2 packets transmitted, 0 packets received, 100.0% packet loss",
+        "[ALERTE] Le serveur est totalement hors ligne.",
+      ],
+    },
+  },
+  {
+    id: 'analysis-decode-base64',
+    title: 'Décryptage Base64',
+    description: 'Décode une chaîne de caractères suspecte trouvée dans un script PowerShell.',
+    category: 'analysis',
+    difficulty: 'intermédiaire',
+    type: 'project',
+    requiredSkills: [],
+    xpReward: { technical: 30, analytical: 30 },
+    content: {
+      type: 'project',
+      scenario: 'Tu as trouvé cette commande cachée dans un script : `powershell.exe -enc aHR0cDovL2V2aWwuY29tL3BheWxvYWQucHkx`. Décode la valeur.',
+      objectives: ['Copier la chaîne encodée', 'Utiliser un outil en ligne ou le terminal (echo ... | base64 -d) pour la décoder'],
+      externalInstructions: [
+        'Chaîne à décoder : aHR0cDovL2V2aWwuY29tL3BheWxvYWQucHkx',
+        'Utilise ton terminal ou un site comme CyberChef.',
+        'Colle le résultat décodé ci-dessous.',
+      ],
+      validationHint: 'Le résultat attendu est une URL pointant vers un fichier Python.',
+      validator: (s: string) => {
+        const res = s.toLowerCase().trim();
+        if (res.includes('evil.com/payload.py')) {
+          return { passed: true, feedback: "Parfait ! L'attaquant cachait le téléchargement de son payload en Base64." };
+        }
+        return { passed: false, feedback: 'Incorrect. Assure-toi de copier uniquement la chaîne aHR0... et de la décoder en Base64.' };
+      },
+    },
+  },
+  {
+    id: 'net-ports-services',
+    title: 'Identification des Services',
+    description: 'Associe les ports par défaut à leurs services correspondants.',
+    category: 'network',
+    difficulty: 'intermédiaire',
+    type: 'quiz',
+    requiredSkills: [],
+    xpReward: { technical: 20 },
+    content: {
+      type: 'quiz',
+      questions: [
+        {
+          question: "Un scan Nmap révèle que le port 22 est ouvert. Quel service tourne très probablement sur ce port ?",
+          options: [
+            { text: "HTTP (Serveur Web)", correct: false, feedback: "HTTP utilise le port 80." },
+            { text: "SSH (Secure Shell)", correct: true, feedback: "Exact. C'est le port standard pour l'administration à distance." },
+            { text: "FTP (Transfert de fichiers)", correct: false, feedback: "FTP utilise les ports 20 et 21." },
+          ],
+          explanation: "Connaître les ports par défaut permet d'identifier rapidement la surface d'attaque d'un serveur.",
+        },
+      ],
+    },
+  },
+  {
+    id: 'linux-grep-regex',
+    title: 'Extraction par Motif (Regex)',
+    description: "Utilise grep pour extraire toutes les adresses IP d'un fichier texte.",
+    category: 'linux',
+    difficulty: 'intermédiaire',
+    type: 'project',
+    requiredSkills: [],
+    xpReward: { technical: 40, speed: 10 },
+    content: {
+      type: 'project',
+      scenario: 'Le fichier `server_dump.txt` contient 10 000 lignes de texte brouillon. Tu dois extraire la seule adresse IP présente.',
+      objectives: ["Comprendre la structure d'une IP (X.X.X.X)", 'Filtrer le texte'],
+      externalInstructions: [
+        'Voici un extrait du texte : "error at 0x892 memory block. connection from 203.0.113.89 dropped. retry in 5s."',
+        "Quelle est l'adresse IP contenue dans cette ligne ?",
+      ],
+      validationHint: 'Une IP est composée de 4 nombres séparés par des points.',
+      validator: (s: string) => {
+        if (s.trim() === '203.0.113.89') return { passed: true, feedback: "Correct ! En situation réelle, on utiliserait une commande Regex complexe avec grep pour l'isoler." };
+        return { passed: false, feedback: 'Cherche un format ressemblant à 192.168.1.1' };
+      },
+    },
+  },
+  {
+    id: 'response-python-blocker',
+    title: 'Script de Blocage (API)',
+    description: "Écris un script Python qui simule un appel API pour bloquer une IP sur le Firewall.",
+    category: 'response',
+    difficulty: 'avancé',
+    type: 'project',
+    requiredSkills: [],
+    xpReward: { technical: 50, analytical: 20 },
+    content: {
+      type: 'project',
+      scenario: "L'interface graphique du pare-feu est en panne. Tu dois bloquer l'IP \"198.51.100.4\" en utilisant l'API REST du pare-feu.",
+      objectives: ['Construire un payload JSON', 'Définir l\'action sur "deny"'],
+      externalInstructions: [
+        'Rédige (dans ton éditeur) un dictionnaire JSON valide représentant ta requête.',
+        'Le JSON doit contenir deux clés : "target_ip" et "action".',
+        'L\'action doit être "deny" et la cible "198.51.100.4".',
+        'Colle ton JSON brut ci-dessous.',
+      ],
+      validationHint: 'Assure-toi que les clés et valeurs sont entre guillemets doubles (format JSON strict).',
+      validator: (s: string) => {
+        try {
+          const parsed = JSON.parse(s);
+          if (parsed.target_ip === '198.51.100.4' && parsed.action === 'deny') {
+            return { passed: true, feedback: 'Super ! L\'automatisation via API (SOAR) est le quotidien des analystes SOC avancés.' };
+          }
+          return { passed: false, feedback: 'Le JSON est valide, mais les valeurs ne correspondent pas à la consigne.' };
+        } catch {
+          return { passed: false, feedback: "Erreur de syntaxe. Ce n'est pas un JSON valide. Vérifie tes guillemets." };
+        }
+      },
+    },
+  },
+  {
+    id: 'analysis-hash-comparison',
+    title: "Vérification d'Intégrité",
+    description: 'Compare les empreintes SHA-256 pour trouver le fichier système corrompu.',
+    category: 'analysis',
+    difficulty: 'avancé',
+    type: 'project',
+    requiredSkills: [],
+    xpReward: { analytical: 50, accuracy: 20 },
+    content: {
+      type: 'project',
+      scenario: 'Un de ces deux fichiers `winlogon.exe` a été remplacé par un malware. Compare leurs Hashes.',
+      objectives: ["Comprendre l'effet avalanche du hachage"],
+      externalInstructions: [
+        'Hash officiel attendu : 8d1f...9b3a',
+        'Hash du Fichier A : 8d1f8e7c2a4b9c1d3e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b9b3a',
+        'Hash du Fichier B : e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+        'Quel fichier est le malware ? (Tape "Fichier A" ou "Fichier B")',
+      ],
+      validationHint: 'Cherche celui dont le hash est totalement différent du hash officiel.',
+      validator: (s: string) => {
+        if (s.toLowerCase().includes('fichier b')) return { passed: true, feedback: 'Exact. Le Fichier A a le même début et la même fin que le hash officiel.' };
+        return { passed: false, feedback: 'Faux. Regarde attentivement le début et la fin du Hash du Fichier A.' };
+      },
+    },
+  },
+  {
+    id: 'threats-mitre-tactics',
+    title: 'Cartographie MITRE ATT&CK',
+    description: 'Associe le comportement du pirate à la bonne tactique du framework MITRE.',
+    category: 'threats',
+    difficulty: 'avancé',
+    type: 'quiz',
+    requiredSkills: [],
+    xpReward: { technical: 30, analytical: 30 },
+    content: {
+      type: 'quiz',
+      questions: [
+        {
+          question: "L'attaquant Oblivion a volé la base de données client et l'a chiffrée. À quelle tactique MITRE (Tactic) cela correspond-il ?",
+          options: [
+            { text: "Initial Access (Accès initial)", correct: false, feedback: "L'accès a déjà été fait bien avant." },
+            { text: "Lateral Movement (Mouvement latéral)", correct: false, feedback: "Le mouvement latéral sert à changer de machine, pas à voler des données." },
+            { text: "Exfiltration & Impact", correct: true, feedback: "Exact. Voler la donnée (Exfiltration) et la chiffrer (Impact) sont les étapes finales d'une attaque." },
+          ],
+          explanation: "Le framework MITRE ATT&CK permet de standardiser la description du comportement des cybercriminels.",
         },
       ],
     },

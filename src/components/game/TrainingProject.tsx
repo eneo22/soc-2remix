@@ -19,6 +19,8 @@ export const TrainingProject = ({ content, onComplete }: Props) => {
     }
   };
 
+  const displayInstructions = content.externalInstructions || (content.instructions ? content.instructions.split('\n') : []);
+
   return (
     <div>
       <div className="rounded-lg border border-primary/30 bg-card p-5 mb-4">
@@ -33,9 +35,17 @@ export const TrainingProject = ({ content, onComplete }: Props) => {
         </ul>
 
         <p className="font-mono text-xs font-bold text-primary mb-2">📝 INSTRUCTIONS</p>
-        <pre className="text-sm text-foreground/70 whitespace-pre-wrap bg-secondary/50 rounded p-3 border border-border">
-          {content.instructions}
-        </pre>
+        {content.instructions ? (
+          <pre className="text-sm text-foreground/70 whitespace-pre-wrap bg-secondary/50 rounded p-3 border border-border">
+            {content.instructions}
+          </pre>
+        ) : content.externalInstructions ? (
+          <div className="space-y-2 bg-secondary/50 rounded p-3 border border-border">
+            {content.externalInstructions.map((line, i) => (
+              <p key={i} className="text-sm text-foreground/70 font-mono">{line}</p>
+            ))}
+          </div>
+        ) : null}
       </div>
 
       <div className="rounded-lg border border-primary/30 bg-card p-4">
