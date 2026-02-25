@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
+import { useAudio } from '@/contexts/AudioContext';
 import { NarrativeBlock } from './Typewriter';
+import { DialogBox } from './DialogBox';
 import { XPNotification } from './GameHUD';
 
 export const Scene2_Mentor = () => {
   const { state, nextScene, addXP } = useGame();
+  const { playSFX } = useAudio();
   const [phase, setPhase] = useState<'narrative' | 'marcus' | 'lesson' | 'quiz' | 'result'>('narrative');
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showXP, setShowXP] = useState(false);
@@ -31,7 +34,6 @@ export const Scene2_Mentor = () => {
     { text: "Pour pirater le mot de passe d'Elias.", correct: false, feedback: "Non, le but n'est pas de pirater Elias mais d'exploiter son autorité." },
   ];
 
-  // Timer for quiz
   useEffect(() => {
     if (phase !== 'quiz' || timer <= 0) return;
     const interval = setInterval(() => setTimer(t => t - 1), 1000);
@@ -47,6 +49,7 @@ export const Scene2_Mentor = () => {
   const handleAnswer = (i: number) => {
     if (selectedAnswer !== null) return;
     setSelectedAnswer(i);
+    playSFX(quizOptions[i].correct ? 'success' : 'error');
     if (quizOptions[i].correct) {
       addXP('reflexion', 50);
       setShowXP(true);
@@ -64,10 +67,9 @@ export const Scene2_Mentor = () => {
           <h2 className="mb-6 font-mono text-xs uppercase tracking-widest text-primary terminal-glow">
             Scène 2 — La Frappe et le Mentor
           </h2>
-
           {choseA ? (
             <div className="mb-6 rounded border border-danger/50 p-4 bg-danger/5">
-              <NarrativeBlock lines={narrativeA} onComplete={() => setPhase('marcus')} speed={20} />
+              <NarrativeBlock lines={narrativeA} onComplete={() => { setPhase('marcus'); playSFX('alert'); }} speed={20} />
             </div>
           ) : (
             <NarrativeBlock lines={narrativeB} onComplete={() => setPhase('marcus')} speed={20} />
@@ -76,52 +78,35 @@ export const Scene2_Mentor = () => {
       )}
 
       {phase === 'marcus' && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl">
-          <h2 className="mb-6 font-mono text-xs uppercase tracking-widest text-primary terminal-glow">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl space-y-4">
+          <h2 className="mb-2 font-mono text-xs uppercase tracking-widest text-primary terminal-glow">
             Scène 2 — La Frappe et le Mentor
           </h2>
-
-          <div className="rounded-lg border border-primary/30 bg-card p-4 mb-4">
-            <p className="mb-1 font-mono text-xs font-bold text-primary">MARCUS — Chef du SOC</p>
+          <DialogBox character="marcus">
             {choseA ? (
-              <p className="text-sm leading-relaxed text-foreground/80">
-                "Bordel de merde, Rookie ! Tu viens vraiment de cliquer sur un lien de cul impliquant le grand patron ?
-                J'ai isolé ton poste (Sandboxing) à la milliseconde près. Tu as failli nous coûter 50 millions."
-              </p>
+              <p>"Bordel de merde, Rookie ! Tu viens vraiment de cliquer sur un lien de cul impliquant le grand patron ? J'ai isolé ton poste (Sandboxing) à la milliseconde près. Tu as failli nous coûter 50 millions."</p>
             ) : (
-              <p className="text-sm leading-relaxed text-foreground/80">
-                "Pas mal, le bleu. 90% des mecs à ta place auraient cliqué pour voir la sextape d'Elias.
-                Tu as repéré le zéro dans 'gl0bal', hein ?"
-              </p>
+              <p>"Pas mal, le bleu. 90% des mecs à ta place auraient cliqué pour voir la sextape d'Elias. Tu as repéré le zéro dans 'gl0bal', hein ?"</p>
             )}
-          </div>
-
-          <button
-            onClick={() => setPhase('lesson')}
-            className="mt-4 rounded-lg border border-primary bg-primary/10 px-6 py-3 font-mono text-sm text-primary transition-all hover:bg-primary/20"
-          >
+          </DialogBox>
+          <button onClick={() => { setPhase('lesson'); playSFX('click'); }} className="mt-4 rounded-lg border border-primary bg-primary/10 px-6 py-3 font-mono text-sm text-primary transition-all hover:bg-primary/20">
             Continuer →
           </button>
         </motion.div>
       )}
 
       {phase === 'lesson' && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl">
-          <div className="rounded-lg border border-primary/30 bg-card p-4 mb-4">
-            <p className="mb-1 font-mono text-xs font-bold text-primary">MARCUS</p>
-            <p className="text-sm leading-relaxed text-foreground/80">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl space-y-4">
+          <DialogBox character="marcus">
+            <p>
               "Écoute-moi bien. C'est ce qu'on appelle du <span className="font-bold text-warning">Spear-Phishing</span> (Hameçonnage ciblé).
               Le hacker, un groupe appelé '<span className="font-bold text-danger">Oblivion</span>', n'a pas utilisé de code complexe.
               Il a utilisé la <span className="font-bold text-primary">psychologie</span>.
               Le sexe, l'urgence, la cupidité, la peur de l'autorité.
               La faille, ce n'est pas Windows. <span className="font-bold text-warning">La faille, c'est l'humain.</span>"
             </p>
-          </div>
-
-          <button
-            onClick={() => { setPhase('quiz'); setTimer(15); }}
-            className="mt-4 rounded-lg border border-primary bg-primary/10 px-6 py-3 font-mono text-sm text-primary transition-all hover:bg-primary/20"
-          >
+          </DialogBox>
+          <button onClick={() => { setPhase('quiz'); setTimer(15); playSFX('beep'); }} className="mt-4 rounded-lg border border-primary bg-primary/10 px-6 py-3 font-mono text-sm text-primary transition-all hover:bg-primary/20">
             Continuer →
           </button>
         </motion.div>
@@ -135,14 +120,9 @@ export const Scene2_Mentor = () => {
               {timer}s
             </div>
           </div>
-
-          <div className="rounded-lg border border-primary/30 bg-card p-4 mb-4">
-            <p className="mb-1 font-mono text-xs text-primary">MARCUS</p>
-            <p className="text-sm text-foreground/90">
-              "Pourquoi Oblivion a imité l'adresse du PDG plutôt qu'un inconnu ?"
-            </p>
-          </div>
-
+          <DialogBox character="marcus" className="mb-4">
+            <p>"Pourquoi Oblivion a imité l'adresse du PDG plutôt qu'un inconnu ?"</p>
+          </DialogBox>
           <div className="space-y-3">
             {quizOptions.map((opt, i) => (
               <button
@@ -151,20 +131,14 @@ export const Scene2_Mentor = () => {
                 disabled={selectedAnswer !== null}
                 className={`w-full rounded-lg border p-4 text-left text-sm transition-all ${
                   selectedAnswer === i
-                    ? opt.correct
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-danger bg-danger/10 text-danger'
-                    : selectedAnswer !== null && opt.correct
-                    ? 'border-primary/50 bg-primary/5'
-                    : 'border-border bg-card text-foreground/70 hover:border-primary/50'
+                    ? opt.correct ? 'border-primary bg-primary/10 text-primary' : 'border-danger bg-danger/10 text-danger'
+                    : selectedAnswer !== null && opt.correct ? 'border-primary/50 bg-primary/5' : 'border-border bg-card text-foreground/70 hover:border-primary/50'
                 }`}
               >
                 <span className="font-mono text-xs text-muted-foreground mr-2">{i + 1}.</span>
                 {opt.text}
                 {selectedAnswer === i && (
-                  <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 text-xs italic">
-                    {opt.feedback}
-                  </motion.p>
+                  <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 text-xs italic">{opt.feedback}</motion.p>
                 )}
               </button>
             ))}
@@ -173,21 +147,15 @@ export const Scene2_Mentor = () => {
       )}
 
       {phase === 'result' && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl text-center">
-          <div className="rounded-lg border border-primary/30 bg-card p-6 mb-6">
-            <p className="mb-1 font-mono text-xs text-primary">MARCUS</p>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl text-center space-y-4">
+          <DialogBox character="marcus">
             {selectedAnswer !== null && quizOptions[selectedAnswer]?.correct ? (
-              <p className="text-sm text-foreground/80">"Bien. Tu commences à comprendre comment ces enfoirés pensent."</p>
+              <p>"Bien. Tu commences à comprendre comment ces enfoirés pensent."</p>
             ) : (
-              <p className="text-sm text-foreground/80">
-                "La bonne réponse, c'est l'autorité et l'urgence. Le PDG, tout le monde lui obéit sans réfléchir. Retiens ça."
-              </p>
+              <p>"La bonne réponse, c'est l'autorité et l'urgence. Le PDG, tout le monde lui obéit sans réfléchir. Retiens ça."</p>
             )}
-          </div>
-          <button
-            onClick={nextScene}
-            className="rounded-lg border border-primary bg-primary/10 px-6 py-3 font-mono text-sm text-primary transition-all hover:bg-primary/20"
-          >
+          </DialogBox>
+          <button onClick={nextScene} className="rounded-lg border border-primary bg-primary/10 px-6 py-3 font-mono text-sm text-primary transition-all hover:bg-primary/20">
             Scène suivante →
           </button>
         </motion.div>

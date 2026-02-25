@@ -1,11 +1,14 @@
 import { useState, useRef, useEffect, KeyboardEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
+import { useAudio } from '@/contexts/AudioContext';
 import { NarrativeBlock } from './Typewriter';
+import { DialogBox } from './DialogBox';
 import { XPNotification } from './GameHUD';
 
 export const Scene3_Terminal = () => {
   const { nextScene, addXP } = useGame();
+  const { playSFX } = useAudio();
   const [phase, setPhase] = useState<'intro' | 'terminal' | 'done'>('intro');
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<{ type: 'prompt' | 'output' | 'error' | 'hint'; text: string }[]>([]);
@@ -46,6 +49,7 @@ export const Scene3_Terminal = () => {
     const cmd = input.trim();
     if (!cmd || validated) return;
 
+    playSFX('typing');
     setHistory(h => [...h, { type: 'prompt', text: `kronos@workstation:~$ ${cmd}` }]);
     setInput('');
 
@@ -65,6 +69,7 @@ export const Scene3_Terminal = () => {
           setTypingOutput(false);
           setValidated(true);
           addXP('technical', 100);
+          playSFX('success');
           setShowXP(true);
           setTimeout(() => setShowXP(false), 2000);
           setTimeout(() => setPhase('done'), 2000);
@@ -73,6 +78,7 @@ export const Scene3_Terminal = () => {
     } else {
       const newAttempts = attempts + 1;
       setAttempts(newAttempts);
+      playSFX('error');
 
       if (command === 'ping' && domain && domain !== 'kronos-gl0bal.com') {
         if (domain === 'kronos-global.com') {
@@ -116,19 +122,13 @@ export const Scene3_Terminal = () => {
       )}
 
       {(phase === 'terminal' || phase === 'done') && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-3xl"
-        >
-          {/* Objective reminder */}
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-3xl">
           <div className="mb-4 rounded border border-primary/30 bg-primary/5 px-4 py-3">
             <p className="font-mono text-xs text-primary">
               🎯 <span className="font-bold">OBJECTIF :</span> Tape la commande <span className="text-warning font-bold">ping kronos-gl0bal.com</span> pour récupérer l'adresse IP du serveur ennemi.
             </p>
           </div>
 
-          {/* Terminal Window */}
           <div className="overflow-hidden rounded-lg border border-primary/30 shadow-2xl shadow-primary/5">
             <div className="flex items-center gap-2 border-b border-primary/20 bg-secondary px-4 py-2">
               <div className="h-3 w-3 rounded-full bg-danger/70" />
@@ -143,7 +143,6 @@ export const Scene3_Terminal = () => {
               className="relative h-[400px] overflow-y-auto bg-terminal-bg p-4 font-mono text-sm cursor-text"
             >
               <div className="scanline absolute inset-0" />
-
               {history.map((entry, i) => (
                 <div key={i} className={`mb-1 ${
                   entry.type === 'prompt' ? 'text-terminal terminal-glow' :
@@ -172,11 +171,7 @@ export const Scene3_Terminal = () => {
               )}
 
               {validated && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="mt-4 text-primary terminal-glow font-bold"
-                >
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 text-primary terminal-glow font-bold">
                   ✓ Commande validée — IP cible identifiée : 185.199.108.153
                 </motion.div>
               )}
@@ -184,23 +179,17 @@ export const Scene3_Terminal = () => {
           </div>
 
           {phase === 'done' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-6">
-              <div className="rounded-lg border border-primary/30 bg-card p-4 mb-4">
-                <p className="font-mono text-xs text-primary mb-1">MARCUS</p>
-                <p className="text-sm text-foreground/80">
-                  "Bingo. <span className="font-bold text-warning">185.199.108.153</span>. C'est un serveur hébergé en Russie. Oblivion est à l'autre bout de cette ligne."
-                </p>
-              </div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-6 space-y-4">
+              <DialogBox character="marcus">
+                <p>"Bingo. <span className="font-bold text-warning">185.199.108.153</span>. C'est un serveur hébergé en Russie. Oblivion est à l'autre bout de cette ligne."</p>
+              </DialogBox>
               <div className="rounded border border-border bg-secondary/50 p-3 text-xs text-muted-foreground">
                 <p className="font-bold text-primary mb-1">📚 Concepts appris :</p>
                 <p>• Une <span className="text-foreground">adresse IP</span> identifie une machine sur un réseau</p>
                 <p>• La commande <span className="font-mono text-terminal">ping</span> teste la connectivité vers un serveur</p>
                 <p>• Un <span className="text-foreground">serveur</span> est une machine qui stocke des données</p>
               </div>
-              <button
-                onClick={nextScene}
-                className="mt-4 w-full rounded-lg border border-primary bg-primary/10 px-6 py-3 font-mono text-sm text-primary transition-all hover:bg-primary/20"
-              >
+              <button onClick={nextScene} className="mt-4 w-full rounded-lg border border-primary bg-primary/10 px-6 py-3 font-mono text-sm text-primary transition-all hover:bg-primary/20">
                 Scène suivante →
               </button>
             </motion.div>

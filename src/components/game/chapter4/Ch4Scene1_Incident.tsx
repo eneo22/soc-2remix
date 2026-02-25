@@ -1,11 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
+import { useAudio } from '@/contexts/AudioContext';
 import { NarrativeBlock } from '../Typewriter';
+import { DialogBox } from '../DialogBox';
 
 export const Ch4Scene1_Incident = () => {
   const { nextScene } = useGame();
+  const { playBGM, playSFX } = useAudio();
   const [phase, setPhase] = useState<'intro' | 'alert' | 'team' | 'ready'>('intro');
+
+  useEffect(() => { playBGM('crisis'); }, []);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 pt-14 pb-10">
@@ -17,15 +22,11 @@ export const Ch4Scene1_Incident = () => {
         {phase === 'intro' && (
           <div className="space-y-4">
             <NarrativeBlock
-              lines={[
-                "02h17.",
-                "Le SOC est en alerte maximale.",
-                "Des transferts massifs de données sortent du réseau interne vers une IP externe inconnue.",
-              ]}
+              lines={["02h17.", "Le SOC est en alerte maximale.", "Des transferts massifs de données sortent du réseau interne vers une IP externe inconnue."]}
               speed={30}
             />
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3.5 }}>
-              <button onClick={() => setPhase('alert')} className="w-full font-mono text-xs text-muted-foreground hover:text-primary transition-colors">
+              <button onClick={() => { setPhase('alert'); playSFX('alert'); }} className="w-full font-mono text-xs text-muted-foreground hover:text-primary transition-colors">
                 Suivant →
               </button>
             </motion.div>
@@ -53,10 +54,9 @@ export const Ch4Scene1_Incident = () => {
 
         {phase === 'team' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-            <div className="rounded-lg border border-primary/30 bg-card p-4">
-              <p className="font-mono text-xs text-primary mb-1">NARRATEUR</p>
-              <p className="text-sm text-foreground/80">Marcus entre, suivi de deux nouveaux membres de l'équipe.</p>
-            </div>
+            <DialogBox character="narrator">
+              <p>Marcus entre, suivi de deux nouveaux membres de l'équipe.</p>
+            </DialogBox>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded border border-cyber-blue/30 bg-cyber-blue/5 p-3">
@@ -71,15 +71,10 @@ export const Ch4Scene1_Incident = () => {
               </div>
             </div>
 
-            <div className="rounded-lg border border-primary/30 bg-card p-4">
-              <p className="font-mono text-xs text-primary mb-1">MARCUS</p>
-              <p className="text-sm text-foreground/80">
-                "Quelqu'un sort des données. Soit on est déjà compromis. Soit on est manipulés."
-              </p>
-              <p className="text-sm text-foreground/80 mt-2">
-                Il te regarde. "On reprend depuis la base. <span className="text-primary font-bold">Pense en couches.</span>"
-              </p>
-            </div>
+            <DialogBox character="marcus">
+              <p>"Quelqu'un sort des données. Soit on est déjà compromis. Soit on est manipulés."</p>
+              <p className="mt-2">Il te regarde. "On reprend depuis la base. <span className="text-primary font-bold">Pense en couches.</span>"</p>
+            </DialogBox>
 
             <button onClick={() => setPhase('ready')} className="w-full rounded-lg border border-primary bg-primary/10 px-6 py-3 font-mono text-sm text-primary hover:bg-primary/20">
               Commencer l'analyse →

@@ -1,11 +1,16 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
+import { useAudio } from '@/contexts/AudioContext';
 import { NarrativeBlock } from './Typewriter';
+import { DialogBox } from './DialogBox';
 
 export const Scene5_Conclusion = () => {
   const { state, goToScene, completeChapter } = useGame();
+  const { playSFX } = useAudio();
 
   const handleContinue = (target: number) => {
+    playSFX('transition');
     completeChapter(1);
     goToScene(target);
   };
@@ -13,12 +18,7 @@ export const Scene5_Conclusion = () => {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 pt-14 pb-10">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8 }}
-        className="max-w-2xl w-full"
-      >
+      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="max-w-2xl w-full">
         <h2 className="mb-8 text-center font-mono text-xs uppercase tracking-widest text-primary terminal-glow">
           Scène 5 — L'Aube d'un Analyste
         </h2>
@@ -33,22 +33,24 @@ export const Scene5_Conclusion = () => {
             speed={30}
           />
 
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 4 }} className="rounded-lg border border-danger/30 bg-card p-4">
-            <p className="font-mono text-xs text-danger mb-1">💬 VALERIA STERLING</p>
-            <p className="text-sm text-foreground/80 italic">"Tu le regretteras."</p>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 4 }}>
+            <DialogBox character="valeria">
+              <p className="italic">"Tu le regretteras."</p>
+            </DialogBox>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 5.5 }} className="rounded-lg border border-primary/30 bg-card p-4">
-            <p className="font-mono text-xs text-primary mb-1">MARCUS</p>
-            <p className="text-sm text-foreground/80">
-              "T'as du cran, petit. T'as fait perdre son bonus à Valeria, mais t'as sauvé les meubles.
-              Oblivion est toujours dans la nature, et ils savent qu'on les a bloqués.
-              Ils vont revenir taper plus fort."
-            </p>
-            <p className="mt-3 text-sm text-foreground/80">
-              "T'en as marre de réinitialiser des mots de passe ?
-              Demain, tu montes au 40ème étage. <span className="font-bold text-primary">Bienvenue dans le SOC.</span>"
-            </p>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 5.5 }}>
+            <DialogBox character="marcus">
+              <p>
+                "T'as du cran, petit. T'as fait perdre son bonus à Valeria, mais t'as sauvé les meubles.
+                Oblivion est toujours dans la nature, et ils savent qu'on les a bloqués.
+                Ils vont revenir taper plus fort."
+              </p>
+              <p className="mt-3">
+                "T'en as marre de réinitialiser des mots de passe ?
+                Demain, tu montes au 40ème étage. <span className="font-bold text-primary">Bienvenue dans le SOC.</span>"
+              </p>
+            </DialogBox>
           </motion.div>
         </div>
 
@@ -103,16 +105,10 @@ export const Scene5_Conclusion = () => {
           </div>
 
           <div className="flex gap-3">
-            <button
-              onClick={() => handleContinue(6)}
-              className="flex-1 rounded-lg border border-primary bg-primary/10 px-6 py-4 font-mono text-sm text-primary transition-all hover:bg-primary/20 hover:shadow-lg hover:shadow-primary/10"
-            >
+            <button onClick={() => handleContinue(6)} className="flex-1 rounded-lg border border-primary bg-primary/10 px-6 py-4 font-mono text-sm text-primary transition-all hover:bg-primary/20 hover:shadow-lg hover:shadow-primary/10">
               ▶ CHAPITRE 2
             </button>
-            <button
-              onClick={() => handleContinue(-1)}
-              className="flex-1 rounded-lg border border-border bg-secondary px-6 py-4 font-mono text-sm text-muted-foreground transition-all hover:text-foreground hover:border-primary/30"
-            >
+            <button onClick={() => handleContinue(-1)} className="flex-1 rounded-lg border border-border bg-secondary px-6 py-4 font-mono text-sm text-muted-foreground transition-all hover:text-foreground hover:border-primary/30">
               ← ACCUEIL
             </button>
           </div>

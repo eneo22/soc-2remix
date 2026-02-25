@@ -1,14 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
+import { useAudio } from '@/contexts/AudioContext';
 import { NarrativeBlock } from './Typewriter';
+import { DialogBox } from './DialogBox';
 
 export const Scene1_Email = () => {
   const { nextScene, setChoice, addXP, setCompromised } = useGame();
+  const { playBGM, playSFX } = useAudio();
   const [phase, setPhase] = useState<'intro' | 'email' | 'choice'>('intro');
   const [hoveredSender, setHoveredSender] = useState(false);
   const [hoveredLink, setHoveredLink] = useState(false);
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
+
+  useEffect(() => { playBGM('helpdesk'); }, []);
 
   const introLines = [
     "Il est 2h14 du matin.",
@@ -21,6 +26,7 @@ export const Scene1_Email = () => {
   ];
 
   const handleChoice = (choice: 'A' | 'B') => {
+    playSFX(choice === 'B' ? 'success' : 'error');
     setChoice('scene1', choice);
     if (choice === 'A') {
       setCompromised(true);
@@ -33,15 +39,11 @@ export const Scene1_Email = () => {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 pt-14">
       {phase === 'intro' && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="max-w-2xl"
-        >
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl">
           <h2 className="mb-6 font-mono text-xs uppercase tracking-widest text-primary terminal-glow">
             Scène 1 — L'Ennui et la Tentation
           </h2>
-          <NarrativeBlock lines={introLines} onComplete={() => setPhase('email')} />
+          <NarrativeBlock lines={introLines} onComplete={() => { setPhase('email'); playSFX('notification'); }} />
         </motion.div>
       )}
 
@@ -98,9 +100,7 @@ export const Scene1_Email = () => {
                   Le transfert offshore de <span className="font-bold text-warning">50 Millions</span> vers les Seychelles est prêt.
                   J'ai hâte de te retrouver au Plaza, Suite 402.
                 </p>
-                <p className="mb-3">
-                  Ne laisse surtout pas ton mari voir ça.
-                </p>
+                <p className="mb-3">Ne laisse surtout pas ton mari voir ça.</p>
                 <p>
                   Clique ici pour valider le routage confidentiel avant demain matin :{' '}
                   <span
@@ -136,7 +136,6 @@ export const Scene1_Email = () => {
             </div>
           </div>
 
-          {/* Choices - NO labels, just descriptions */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
