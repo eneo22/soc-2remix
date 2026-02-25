@@ -1,11 +1,16 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
+import { useAudio } from '@/contexts/AudioContext';
 import { NarrativeBlock } from '../Typewriter';
+import { DialogBox } from '../DialogBox';
 
 export const Ch2Scene7_Conclusion = () => {
   const { state, goToScene, completeChapter } = useGame();
+  const { playSFX } = useAudio();
 
   const handleContinue = (target: number) => {
+    playSFX('transition');
     completeChapter(2);
     goToScene(target);
   };
@@ -19,24 +24,26 @@ export const Ch2Scene7_Conclusion = () => {
         </h2>
 
         <div className="space-y-4 mb-8">
-          <NarrativeBlock
-            lines={[
-              "Marcus regarde l'écran.",
-              "\"Ils ont utilisé une infrastructure légitime. Ce serveur est hébergé chez un fournisseur cloud américain. Oblivion n'est pas amateur.\"",
-              "Une nouvelle alerte apparaît : \"Connexion entrante suspecte sur port 22.\"",
-            ]}
-            speed={30}
-          />
+          <NarrativeBlock lines={["Marcus regarde l'écran."]} speed={30} />
 
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 4 }} className="rounded-lg border border-primary/30 bg-card p-4">
-            <p className="font-mono text-xs text-primary mb-1">MARCUS</p>
-            <p className="text-sm text-foreground/80">
-              "Tu voulais arrêter de réinitialiser des mots de passe ? Bienvenue dans le monde réel.
-              Au prochain chapitre, tu vas apprendre à utiliser Linux pour comprendre ce qui se passe à l'intérieur d'un serveur."
-            </p>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}>
+            <DialogBox character="marcus">
+              <p>"Ils ont utilisé une infrastructure légitime. Ce serveur est hébergé chez un fournisseur cloud américain. Oblivion n'est pas amateur."</p>
+            </DialogBox>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 5 }} className="rounded-lg border border-danger/30 bg-danger/5 p-4 text-center">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 4 }} className="rounded-lg border border-danger/30 bg-danger/5 p-3 text-center">
+            <p className="font-mono text-xs text-danger">⚠ Connexion entrante suspecte sur port 22</p>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 5 }}>
+            <DialogBox character="marcus">
+              <p>"Tu voulais arrêter de réinitialiser des mots de passe ? Bienvenue dans le monde réel.
+              Au prochain chapitre, tu vas apprendre à penser en couches."</p>
+            </DialogBox>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 6 }} className="rounded-lg border border-danger/30 bg-danger/5 p-4 text-center">
             <p className="font-mono text-xs text-danger">⚠ ALERTE</p>
             <p className="text-sm text-danger/80 mt-1">External scan detected from 185.193.XX.XX</p>
             <p className="text-xs text-muted-foreground mt-2 italic">L'attaque ne faisait que commencer...</p>
@@ -80,16 +87,10 @@ export const Ch2Scene7_Conclusion = () => {
           </div>
 
           <div className="flex gap-3">
-            <button
-              onClick={() => handleContinue(13)}
-              className="flex-1 rounded-lg border border-primary bg-primary/10 px-6 py-4 font-mono text-sm text-primary transition-all hover:bg-primary/20"
-            >
+            <button onClick={() => handleContinue(13)} className="flex-1 rounded-lg border border-primary bg-primary/10 px-6 py-4 font-mono text-sm text-primary transition-all hover:bg-primary/20">
               ▶ CHAPITRE 3
             </button>
-            <button
-              onClick={() => handleContinue(-1)}
-              className="flex-1 rounded-lg border border-border bg-secondary px-6 py-4 font-mono text-sm text-muted-foreground transition-all hover:text-foreground hover:border-primary/30"
-            >
+            <button onClick={() => handleContinue(-1)} className="flex-1 rounded-lg border border-border bg-secondary px-6 py-4 font-mono text-sm text-muted-foreground transition-all hover:text-foreground hover:border-primary/30">
               ← ACCUEIL
             </button>
           </div>

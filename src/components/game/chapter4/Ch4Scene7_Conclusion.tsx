@@ -1,12 +1,17 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
+import { useAudio } from '@/contexts/AudioContext';
 import { NarrativeBlock } from '../Typewriter';
+import { DialogBox } from '../DialogBox';
 
 export const Ch4Scene7_Conclusion = () => {
   const { state, goToScene, completeChapter } = useGame();
+  const { playSFX } = useAudio();
   const totalXP = Object.values(state.xp).reduce((a, b) => a + b, 0);
 
   const handleFinish = (target: number) => {
+    playSFX('transition');
     completeChapter(4);
     goToScene(target);
   };
@@ -19,30 +24,29 @@ export const Ch4Scene7_Conclusion = () => {
         </h2>
 
         <div className="space-y-4 mb-8">
-          <NarrativeBlock
-            lines={[
-              "Le silence retombe sur le SOC.",
-              "La menace a été contenue. Mais le doute persiste.",
-            ]}
-            speed={30}
-          />
+          <NarrativeBlock lines={["Le silence retombe sur le SOC.", "La menace a été contenue. Mais le doute persiste."]} speed={30} />
 
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3 }} className="rounded-lg border border-primary/30 bg-card p-4">
-            <p className="font-mono text-xs text-primary mb-1">MARCUS</p>
-            <p className="text-sm text-foreground/80">
-              "Un réseau, ce n'est pas un câble. C'est une superposition de couches. Si une seule ment, <span className="text-danger font-bold">tout ment</span>."
-            </p>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3 }}>
+            <DialogBox character="marcus">
+              <p>"Un réseau, ce n'est pas un câble. C'est une superposition de couches. Si une seule ment, <span className="text-danger font-bold">tout ment</span>."</p>
+            </DialogBox>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 5 }} className="rounded-lg border border-danger/30 bg-danger/5 p-4 text-center">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 5 }}>
+            <DialogBox character="oblivion">
+              <p className="glitch-text">"Vous avez colmaté une fissure. Le barrage est toujours fragile."</p>
+            </DialogBox>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 6.5 }} className="rounded-lg border border-danger/30 bg-danger/5 p-4 text-center">
             <p className="font-mono text-xs text-danger">⚠ NOUVELLE ALERTE</p>
             <p className="text-sm text-danger/80 mt-1">External scan detected from 185.193.XX.XX</p>
             <p className="text-xs text-muted-foreground mt-2 italic">L'attaque ne faisait que commencer...</p>
           </motion.div>
         </div>
 
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 7 }} className="rounded-xl border border-primary/50 bg-card p-8 text-center">
-          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 7.5, type: 'spring' }} className="mb-4 inline-block rounded-full border-2 border-primary bg-primary/10 p-4">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 8 }} className="rounded-xl border border-primary/50 bg-card p-8 text-center">
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 8.5, type: 'spring' }} className="mb-4 inline-block rounded-full border-2 border-primary bg-primary/10 p-4">
             <span className="text-3xl">🕸️</span>
           </motion.div>
           <h3 className="mb-2 font-mono text-lg font-bold text-primary terminal-glow">CHAPITRE 4 TERMINÉ</h3>
@@ -93,16 +97,10 @@ export const Ch4Scene7_Conclusion = () => {
           </div>
 
           <div className="flex gap-3">
-            <button
-              onClick={() => handleFinish(100)}
-              className="flex-1 rounded-lg border border-primary bg-primary/10 px-6 py-4 font-mono text-sm text-primary transition-all hover:bg-primary/20"
-            >
+            <button onClick={() => handleFinish(100)} className="flex-1 rounded-lg border border-primary bg-primary/10 px-6 py-4 font-mono text-sm text-primary transition-all hover:bg-primary/20">
               🏋️ ENTRAÎNEMENT
             </button>
-            <button
-              onClick={() => handleFinish(-1)}
-              className="flex-1 rounded-lg border border-border bg-secondary px-6 py-4 font-mono text-sm text-muted-foreground transition-all hover:text-foreground hover:border-primary/30"
-            >
+            <button onClick={() => handleFinish(-1)} className="flex-1 rounded-lg border border-border bg-secondary px-6 py-4 font-mono text-sm text-muted-foreground transition-all hover:text-foreground hover:border-primary/30">
               ← ACCUEIL
             </button>
           </div>

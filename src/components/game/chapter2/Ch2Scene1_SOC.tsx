@@ -1,28 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/contexts/GameContext';
+import { useAudio } from '@/contexts/AudioContext';
 import { NarrativeBlock } from '../Typewriter';
+import { DialogBox } from '../DialogBox';
 import { XPNotification } from '../GameHUD';
 
 export const Ch2Scene1_SOC = () => {
   const { nextScene, addXP } = useGame();
+  const { playBGM, playSFX } = useAudio();
   const [phase, setPhase] = useState<'narrative' | 'schema' | 'lesson' | 'quiz' | 'result'>('narrative');
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showXP, setShowXP] = useState(false);
+
+  useEffect(() => { playBGM('soc'); }, []);
 
   const introLines = [
     "Il est 8h03.",
     "Les portes de l'ascenseur s'ouvrent sur le SOC de KRONOS Global.",
     "Mur d'écrans. Cartes du monde. Alertes rouges. Graphiques mouvants.",
     "Marcus t'attend, café noir à la main.",
-  ];
-
-  const marcusLines = [
-    "\"Hier, tu as survécu. Aujourd'hui, tu vas comprendre comment on respire ici.\"",
-    "\"La cybersécurité, ce n'est pas de la magie. C'est du réseau.\"",
-    "Il affiche un schéma sur l'écran principal.",
-    "Un bâtiment. Des ordinateurs. Un routeur. Internet. Des serveurs.",
-    "\"Explique-moi ce que tu vois.\"",
   ];
 
   const quizOptions = [
@@ -34,6 +31,7 @@ export const Ch2Scene1_SOC = () => {
   const handleAnswer = (i: number) => {
     if (selectedAnswer !== null) return;
     setSelectedAnswer(i);
+    playSFX(quizOptions[i].correct ? 'success' : 'error');
     if (quizOptions[i].correct) {
       addXP('analytical', 50);
       setShowXP(true);
@@ -56,11 +54,23 @@ export const Ch2Scene1_SOC = () => {
       )}
 
       {phase === 'schema' && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl">
-          <h2 className="mb-6 font-mono text-xs uppercase tracking-widest text-primary terminal-glow">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl space-y-4">
+          <h2 className="mb-2 font-mono text-xs uppercase tracking-widest text-primary terminal-glow">
             Chapitre 2 — Le 40ème Étage
           </h2>
-          <NarrativeBlock lines={marcusLines} onComplete={() => setPhase('lesson')} speed={25} />
+          <DialogBox character="marcus">
+            <p>"Hier, tu as survécu. Aujourd'hui, tu vas comprendre comment on respire ici."</p>
+            <p className="mt-2">"La cybersécurité, ce n'est pas de la magie. C'est du réseau."</p>
+          </DialogBox>
+          <DialogBox character="narrator">
+            <p>Il affiche un schéma sur l'écran principal. Un bâtiment. Des ordinateurs. Un routeur. Internet. Des serveurs.</p>
+          </DialogBox>
+          <DialogBox character="marcus">
+            <p>"Explique-moi ce que tu vois."</p>
+          </DialogBox>
+          <button onClick={() => { setPhase('lesson'); playSFX('click'); }} className="mt-4 rounded-lg border border-primary bg-primary/10 px-6 py-3 font-mono text-sm text-primary transition-all hover:bg-primary/20">
+            Continuer →
+          </button>
         </motion.div>
       )}
 
@@ -82,10 +92,7 @@ export const Ch2Scene1_SOC = () => {
               </div>
             </div>
           </div>
-          <button
-            onClick={() => setPhase('quiz')}
-            className="mt-4 rounded-lg border border-primary bg-primary/10 px-6 py-3 font-mono text-sm text-primary transition-all hover:bg-primary/20"
-          >
+          <button onClick={() => setPhase('quiz')} className="mt-4 rounded-lg border border-primary bg-primary/10 px-6 py-3 font-mono text-sm text-primary transition-all hover:bg-primary/20">
             Quiz de validation →
           </button>
         </motion.div>
@@ -121,16 +128,15 @@ export const Ch2Scene1_SOC = () => {
       )}
 
       {phase === 'result' && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl text-center">
-          <div className="rounded-lg border border-primary/30 bg-card p-6 mb-4">
-            <p className="font-mono text-xs text-primary mb-2">MARCUS</p>
-            <p className="text-sm text-foreground/80">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl text-center space-y-4">
+          <DialogBox character="marcus">
+            <p>
               {selectedAnswer !== null && quizOptions[selectedAnswer]?.correct
                 ? "\"Bien. Tu commences à voir le réseau comme je le vois.\""
                 : "\"La bonne réponse, c'est pour identifier une machine. Retiens ça, c'est la base de tout.\""
               }
             </p>
-          </div>
+          </DialogBox>
           <button onClick={nextScene} className="rounded-lg border border-primary bg-primary/10 px-6 py-3 font-mono text-sm text-primary transition-all hover:bg-primary/20">
             Scène suivante →
           </button>
