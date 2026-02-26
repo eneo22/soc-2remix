@@ -6,6 +6,7 @@ const chapters = [
   { id: 2, title: 'Anatomie d\'un Réseau', subtitle: 'Network Anatomy', icon: '🌐', startScene: 6, description: 'IP, DNS, ports, trafic réseau, Wireshark.' },
   { id: 3, title: 'Les Couches Invisibles', subtitle: 'The Invisible Layers', icon: '🧬', startScene: 13, description: 'Modèle OSI, TCP/IP, ARP, diagnostic réseau.' },
   { id: 4, title: 'Les Couches du Mensonge', subtitle: 'Layers of Deception', icon: '🕸️', startScene: 20, description: 'ARP spoofing, DNS poisoning, attaque multi-couches.' },
+  { id: 5, title: "L'Ombre Persistante", subtitle: 'The Persistent Shadow', icon: '🕵️', startScene: 27, description: 'Investigation avancée, corrélation multi-logs, persistance attaquant.' },
 ];
 
 export const ChapterSelect = () => {

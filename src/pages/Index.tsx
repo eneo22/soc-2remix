@@ -32,6 +32,13 @@ import { Ch4Scene4_DNSPoison } from '@/components/game/chapter4/Ch4Scene4_DNSPoi
 import { Ch4Scene5_Chain } from '@/components/game/chapter4/Ch4Scene5_Chain';
 import { Ch4Scene6_Isolate } from '@/components/game/chapter4/Ch4Scene6_Isolate';
 import { Ch4Scene7_Conclusion } from '@/components/game/chapter4/Ch4Scene7_Conclusion';
+import { Ch5Scene1_Alert } from '@/components/game/chapter5/Ch5Scene1_Alert';
+import { Ch5Scene2_Diagnostic } from '@/components/game/chapter5/Ch5Scene2_Diagnostic';
+import { Ch5Scene3_DNS } from '@/components/game/chapter5/Ch5Scene3_DNS';
+import { Ch5Scene4_Logs } from '@/components/game/chapter5/Ch5Scene4_Logs';
+import { Ch5Scene5_Chain } from '@/components/game/chapter5/Ch5Scene5_Chain';
+import { Ch5Scene6_Decision } from '@/components/game/chapter5/Ch5Scene6_Decision';
+import { Ch5Scene7_Conclusion } from '@/components/game/chapter5/Ch5Scene7_Conclusion';
 import { TrainingHub } from '@/components/game/TrainingHub';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -84,10 +91,17 @@ const GameScreen = () => {
     24: <Ch4Scene5_Chain key="ch4s5" />,
     25: <Ch4Scene6_Isolate key="ch4s6" />,
     26: <Ch4Scene7_Conclusion key="ch4s7" />,
+    27: <Ch5Scene1_Alert key="ch5s1" />,
+    28: <Ch5Scene2_Diagnostic key="ch5s2" />,
+    29: <Ch5Scene3_DNS key="ch5s3" />,
+    30: <Ch5Scene4_Logs key="ch5s4" />,
+    31: <Ch5Scene5_Chain key="ch5s5" />,
+    32: <Ch5Scene6_Decision key="ch5s6" />,
+    33: <Ch5Scene7_Conclusion key="ch5s7" />,
   };
 
-  const currentChapter = scene >= 20 ? 4 : scene >= 13 ? 3 : scene >= 6 ? 2 : 1;
-  const sceneInChapter = scene >= 20 ? scene - 19 : scene >= 13 ? scene - 12 : scene >= 6 ? scene - 5 : scene;
+  const currentChapter = scene >= 27 ? 5 : scene >= 20 ? 4 : scene >= 13 ? 3 : scene >= 6 ? 2 : 1;
+  const sceneInChapter = scene >= 27 ? scene - 26 : scene >= 20 ? scene - 19 : scene >= 13 ? scene - 12 : scene >= 6 ? scene - 5 : scene;
 
   return (
     <div className="min-h-screen bg-background">
