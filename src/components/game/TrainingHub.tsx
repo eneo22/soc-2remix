@@ -45,6 +45,8 @@ export const TrainingHub = () => {
     response: '🛡️ Réponse',
     network: '🌐 Réseau',
     threats: '⚔️ Menaces',
+    python: '🐍 Python',
+    logs: '📄 Logs',
   };
 
   const categoryColors: Record<string, string> = {
@@ -53,6 +55,8 @@ export const TrainingHub = () => {
     response: 'text-danger border-danger/30 bg-danger/5',
     network: 'text-warning border-warning/30 bg-warning/5',
     threats: 'text-accent border-accent/30 bg-accent/5',
+    python: 'text-primary border-primary/30 bg-primary/5',
+    logs: 'text-cyber-blue border-cyber-blue/30 bg-cyber-blue/5',
   };
 
   const difficultyColors: Record<string, string> = {
