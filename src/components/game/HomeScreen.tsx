@@ -30,13 +30,13 @@ export const HomeScreen = () => {
           </motion.div>
         )}
 
-        <div className="mt-8 space-y-4">
+        <div className="mt-8 space-y-3">
           <motion.button
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
             onClick={() => { goToScene(-2); playSFX('click'); }}
-            className="w-full rounded-lg border border-primary bg-primary/10 px-8 py-5 font-mono text-sm text-primary transition-all hover:bg-primary/20 hover:shadow-lg hover:shadow-primary/10"
+            className="w-full rounded-lg border border-primary bg-primary/10 px-8 py-4 font-mono text-sm text-primary transition-all hover:bg-primary/20 hover:shadow-lg hover:shadow-primary/10"
           >
             <span className="text-lg">📖</span>
             <span className="ml-3">MODE HISTOIRE</span>
@@ -48,12 +48,47 @@ export const HomeScreen = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
             onClick={() => { goToScene(100); playSFX('click'); }}
-            className="w-full rounded-lg border border-border bg-secondary px-8 py-5 font-mono text-sm text-muted-foreground transition-all hover:text-foreground hover:border-primary/30"
+            className="w-full rounded-lg border border-border bg-secondary px-8 py-4 font-mono text-sm text-muted-foreground transition-all hover:text-foreground hover:border-primary/30"
           >
             <span className="text-lg">🏋️</span>
             <span className="ml-3">MODE ENTRAÎNEMENT</span>
             <p className="mt-1 text-xs text-muted-foreground font-sans">Renforce tes compétences avec des exercices</p>
           </motion.button>
+
+          <div className="grid grid-cols-3 gap-3">
+            <motion.button
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              onClick={() => { goToScene(101); playSFX('click'); }}
+              className="rounded-lg border border-border bg-secondary px-3 py-4 font-mono text-xs text-muted-foreground transition-all hover:text-foreground hover:border-cyber-blue/30"
+            >
+              <span className="text-lg block mb-1">📖</span>
+              Academy
+            </motion.button>
+
+            <motion.button
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.65 }}
+              onClick={() => { goToScene(102); playSFX('click'); }}
+              className="rounded-lg border border-border bg-secondary px-3 py-4 font-mono text-xs text-muted-foreground transition-all hover:text-foreground hover:border-warning/30"
+            >
+              <span className="text-lg block mb-1">🏆</span>
+              Certifications
+            </motion.button>
+
+            <motion.button
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              onClick={() => { goToScene(103); playSFX('click'); }}
+              className="rounded-lg border border-border bg-secondary px-3 py-4 font-mono text-xs text-muted-foreground transition-all hover:text-foreground hover:border-primary/30"
+            >
+              <span className="text-lg block mb-1">📄</span>
+              Mon CV
+            </motion.button>
+          </div>
         </div>
 
         {hasSave && (

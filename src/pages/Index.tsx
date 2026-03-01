@@ -40,6 +40,9 @@ import { Ch5Scene5_Chain } from '@/components/game/chapter5/Ch5Scene5_Chain';
 import { Ch5Scene6_Decision } from '@/components/game/chapter5/Ch5Scene6_Decision';
 import { Ch5Scene7_Conclusion } from '@/components/game/chapter5/Ch5Scene7_Conclusion';
 import { TrainingHub } from '@/components/game/TrainingHub';
+import { AcademyHub } from '@/components/game/AcademyHub';
+import { CertificationCenter } from '@/components/game/CertificationCenter';
+import { PlayerCV } from '@/components/game/PlayerCV';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const GameScreen = () => {
@@ -59,6 +62,36 @@ const GameScreen = () => {
         <AudioToggle />
         <GameHUD xp={state.xp} chapter={state.currentChapter} scene={0} />
         <TrainingHub />
+      </div>
+    );
+  }
+
+  // Academy
+  if (scene === 101) {
+    return (
+      <div className="min-h-screen bg-background">
+        <AudioToggle />
+        <AcademyHub />
+      </div>
+    );
+  }
+
+  // Certifications
+  if (scene === 102) {
+    return (
+      <div className="min-h-screen bg-background">
+        <AudioToggle />
+        <CertificationCenter />
+      </div>
+    );
+  }
+
+  // CV
+  if (scene === 103) {
+    return (
+      <div className="min-h-screen bg-background">
+        <AudioToggle />
+        <PlayerCV />
       </div>
     );
   }
